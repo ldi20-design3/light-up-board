@@ -1,2 +1,2 @@
-# light-up-board
-Code for the physical light-up board
+# light-up-module
+Code for the physical light-up Arduino-based module
