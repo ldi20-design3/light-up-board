@@ -1,8 +1,0 @@
-{
-    "board": "esp32:esp32:d32_pro",
-    "configuration": "PSRAM=disabled,PartitionScheme=default,FlashFreq=80,UploadSpeed=115200,DebugLevel=none",
-    "port": "/dev/tty.usbserial-14610",
-    "programmer": "AVR ISP",
-    "sketch": "ESP32_BLE_UART_Demo/ESP32_BLE_UART_Demo.ino",
-    "output": "../build"
-}
