@@ -28,7 +28,9 @@ BLECharacteristic *pCharacteristic;
 bool deviceConnected = false;
 float txValue = 0;
 const int readPin = 32; // Use GPIO number. See ESP32 board pinouts
-
+int red = 12;
+int green = 13;
+int blue = 14;
 
 //std::string rxValue; // Could also make this a global var to access it in loop()
 
@@ -64,13 +66,23 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         Serial.println();
 
         // Do stuff based on the command received from the app
-        if (rxValue.find("A") != -1) { 
-          Serial.print("Turning ON!");
-          digitalWrite(LED_BUILTIN, HIGH);
+        if (rxValue.find("R") != -1) { 
+          Serial.print("Turning RED");
+          digitalWrite(red, HIGH);
+          digitalWrite(blue, LOW);
+          digitalWrite(green,LOW);
         }
         else if (rxValue.find("B") != -1) {
-          Serial.print("Turning OFF!");
-          digitalWrite(LED_BUILTIN, LOW);
+          Serial.print("Turning BLUE");
+          digitalWrite(red, LOW);
+          digitalWrite(blue, HIGH);
+          digitalWrite(green,LOW);
+        }
+        else if (rxValue.find("G") != -1){
+          Serial.print("Turning Green");
+          digitalWrite(red, LOW);
+          digitalWrite(blue, LOW);
+          digitalWrite(green,HIGH);
         }
 
         Serial.println();
@@ -82,7 +94,9 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(red, OUTPUT);
+  pinMode(blue, OUTPUT);
+  pinMode(green, OUTPUT);
 
   // Create the BLE Device
   BLEDevice::init("ESP32 UART Test"); // Give it a name
