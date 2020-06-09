@@ -7,4 +7,4 @@ PIN | KEY
 12 | Red LED Channel
 13 | Green LED Channel
 14 | Blue LED Channel
-22 & 23 | Ultrasonic Sensor
+22 & 23 | Ultrasonic Sensor Echo & Trig Pins
