@@ -25,29 +25,30 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 // SD Card Libraries
-#include <SPI.h>
-#include <SD.h>
-#include <RTClib.h>
+// #include <SPI.h>
+// #include <SD.h>
+// #include <RTClib.h>
 
 BLECharacteristic *pCharacteristic;
 BLECharacteristicCallbacks *pCharacteristicCallbacks;
 bool deviceConnected = false;
 float txValue = 0;
 const int readPin = 32; // Use GPIO number. See ESP32 board pinouts
-const int red = 12;
-const int green = 13;
+const int red = 13;
+const int green = 15;
 const int blue = 14;
-const int trigPin = 23;
-const int echoPin = 22;
+const int trigPin = 4;
+const int echoPin = 5;
 long duration;
 int distance;
-int x = 1;
+// For file writing
+// int x = 1;
 
 // Initialize File object
-File dataFile;
+// File dataFile;
 
 // Initialize DateTime object
-DateTime now;
+// DateTime now;
 
 
 //std::string rxValue; // Could also make this a global var to access it in loop()
@@ -107,20 +108,11 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 
-void initializeFile() {
-  dataFile = SD.open("data.txt", FILE_WRITE);
-  dataFile.println("Command,Time");
-  dataFile.close();
-}
-
-int calculateDistance(){ 
-  digitalWrite(trigPin, HIGH); // Sets the trigPin on HIGH state for 10 micro seconds
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
-  distance= duration*0.006752; //Calculates distance in inches 
-  return distance;
-}
+// void initializeFile() {
+//   dataFile = SD.open("data.txt", FILE_WRITE);
+//   dataFile.println("Command,Time");
+//   dataFile.close();
+// }
 
 void setup() {
   Serial.begin(115200);
@@ -131,13 +123,14 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   
-  if (! rtc.initialized()) {
-    Serial.println("RTC is NOT running!");
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  }
+  // Initialize time for RTC functions
+  // if (! rtc.initialized()) {
+  //   Serial.println("RTC is NOT running!");
+  //   // following line sets the RTC to the date & time this sketch was compiled
+  //   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // }
   
-  initializeFile();
+  // initializeFile();
 
   // Create the BLE Device
   BLEDevice::init("Ring Light Control"); // Give it a name
@@ -172,19 +165,24 @@ void setup() {
   Serial.println("Waiting a client connection to notify...");
 }
 
+int calculateDistance(){ 
+  digitalWrite(trigPin, HIGH); // Sets the trigPin on HIGH state for 10 micro seconds
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
+  distance= duration*0.006752; //Calculates distance in inches 
+  return distance;
+}
+
 void loop() {
   distance = calculateDistance();
-  Serial.println(distance);
   if (deviceConnected) {
-
-    // TEST: Placing function in the loop
-    if(distance > 5) {
-      pCharacteristicCallbacks->onWrite(pCharacteristic);
-    } else {
-    //   digitalWrite(red,LOW);
-    //   digitalWrite(green,LOW); 
-    //   digitalWrite(blue,LOW);
+    Serial.println(distance);
+    if(distance <= 5) {
+      digitalWrite(red,LOW);
+      digitalWrite(green,LOW); 
+      digitalWrite(blue,LOW);
     }
   }
-//   delay(1000);
+
 }
