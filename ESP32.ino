@@ -27,6 +27,7 @@
 // SD Card Libraries
 #include <SPI.h>
 #include <SD.h>
+#include <RTClib.h>
 
 BLECharacteristic *pCharacteristic;
 BLECharacteristicCallbacks *pCharacteristicCallbacks;
@@ -40,9 +41,13 @@ const int trigPin = 23;
 const int echoPin = 22;
 long duration;
 int distance;
+int x = 1;
 
 // Initialize File object
 File dataFile;
+
+// Initialize DateTime object
+DateTime now;
 
 
 //std::string rxValue; // Could also make this a global var to access it in loop()
@@ -102,6 +107,12 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 
+void initializeFile() {
+  dataFile = SD.open("data.txt", FILE_WRITE);
+  dataFile.println("Command,Time");
+  dataFile.close();
+}
+
 int calculateDistance(){ 
   digitalWrite(trigPin, HIGH); // Sets the trigPin on HIGH state for 10 micro seconds
   delayMicroseconds(10);
@@ -120,7 +131,13 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   
-
+  if (! rtc.initialized()) {
+    Serial.println("RTC is NOT running!");
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+  
+  initializeFile();
 
   // Create the BLE Device
   BLEDevice::init("Ring Light Control"); // Give it a name
