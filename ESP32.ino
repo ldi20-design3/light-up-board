@@ -19,10 +19,14 @@
    In this example rxValue is the data received (only accessible inside that function).
    And txValue is the data to be sent, in this example just a byte incremented every second. 
 */
+// Bluetooth Libraries
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+// SD Card Libraries
+#include <SPI.h>
+#include <SD.h>
 
 BLECharacteristic *pCharacteristic;
 BLECharacteristicCallbacks *pCharacteristicCallbacks;
@@ -36,6 +40,9 @@ const int trigPin = 23;
 const int echoPin = 22;
 long duration;
 int distance;
+
+// Initialize File object
+File dataFile;
 
 
 //std::string rxValue; // Could also make this a global var to access it in loop()
