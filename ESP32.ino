@@ -28,19 +28,28 @@
 // #include <SPI.h>
 // #include <SD.h>
 // #include <RTClib.h>
+// LED Library
+#include <Adafruit_NeoPixel.h>
 
 BLECharacteristic *pCharacteristic;
 BLECharacteristicCallbacks *pCharacteristicCallbacks;
 bool deviceConnected = false;
 float txValue = 0;
 const int readPin = 32; // Use GPIO number. See ESP32 board pinouts
-const int red = 13;
-const int green = 15;
-const int blue = 14;
+// Define Ultrasonic
 const int trigPin = 4;
 const int echoPin = 5;
 long duration;
 int distance;
+
+// Define LED stuff
+#define PIN        2
+#define NUMPIXELS 30 
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+int green = pixels.Color(0, 150, 0);
+int red = pixels.Color(150, 0, 0);
+int blue = pixels.Color(0, 0, 150);
+
 // For file writing
 // int x = 1;
 
@@ -83,23 +92,26 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         }
 
         // Do stuff based on the command received from the app
-        if (rxValue.find("R") != -1) { 
+        if (rxValue.find("R") != -1){
           Serial.print("Turning RED");
-          digitalWrite(red, HIGH);
-          digitalWrite(blue, LOW);
-          digitalWrite(green,LOW);
+          for (int i = 0; i < NUMPIXELS; i++){ 
+            pixels.setPixelColor(i, red);
+          }
+          pixels.show(); // Send the updated pixel colors to the hardware.
         }
         else if (rxValue.find("B") != -1) {
           Serial.print("Turning BLUE");
-          digitalWrite(red, LOW);
-          digitalWrite(blue, HIGH);
-          digitalWrite(green,LOW);
+          for (int i = 0; i < NUMPIXELS; i++){ 
+            pixels.setPixelColor(i, blue);
+          }
+          pixels.show(); // Send the updated pixel colors to the hardware.
         }
         else if (rxValue.find("G") != -1){
           Serial.print("Turning Green");
-          digitalWrite(red, LOW);
-          digitalWrite(blue, LOW);
-          digitalWrite(green,HIGH);
+          for (int i = 0; i < NUMPIXELS; i++){ 
+            pixels.setPixelColor(i, green);
+          }
+          pixels.show(); // Send the updated pixel colors to the hardware.
         }
 
         Serial.println();
@@ -117,9 +129,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
 
-  pinMode(red, OUTPUT);
-  pinMode(blue, OUTPUT);
-  pinMode(green, OUTPUT);
+  pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   
@@ -179,10 +189,10 @@ void loop() {
   if (deviceConnected) {
     Serial.println(distance);
     if(distance <= 5) {
-      digitalWrite(red,LOW);
-      digitalWrite(green,LOW); 
-      digitalWrite(blue,LOW);
+      pixels.clear();
+      pixels.show();
     }
+    pixels.clear();
   }
 
 }
