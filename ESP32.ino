@@ -1,8 +1,4 @@
 /*
-    Video: https://www.youtube.com/watch?v=oCMOYS71NIU
-    Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleNotify.cpp
-    Ported to Arduino ESP32 by Evandro Copercini
-
    Create a BLE server that, once we receive a connection, will send periodic notifications.
    The service advertises itself as: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
    Has a characteristic of: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E - used for receiving data with "WRITE" 
@@ -15,19 +11,12 @@
    4. Create a BLE Descriptor on the characteristic
    5. Start the service.
    6. Start advertising.
-
-   In this example rxValue is the data received (only accessible inside that function).
-   And txValue is the data to be sent, in this example just a byte incremented every second. 
 */
 // Bluetooth Libraries
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-// SD Card Libraries
-// #include <SPI.h>
-// #include <SD.h>
-// #include <RTClib.h>
 // LED Library
 #include <Adafruit_NeoPixel.h>
 
@@ -50,14 +39,13 @@ int green = pixels.Color(0, 150, 0);
 int red = pixels.Color(150, 0, 0);
 int blue = pixels.Color(0, 0, 150);
 
-// For file writing
-// int x = 1;
+// Define Buzzer
+int speakerPin = 13;
 
-// Initialize File object
-// File dataFile;
+char notes[] = "ccggaagffeeddc "; // a space represents a rest
+int beats[] = { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 };
+int tempo = 300;
 
-// Initialize DateTime object
-// DateTime now;
 
 
 //std::string rxValue; // Could also make this a global var to access it in loop()
@@ -120,11 +108,26 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 
-// void initializeFile() {
-//   dataFile = SD.open("data.txt", FILE_WRITE);
-//   dataFile.println("Command,Time");
-//   dataFile.close();
-// }
+void playTone(int tone, int duration) {
+  for (long i = 0; i < duration * 1000L; i += tone * 2) {
+    digitalWrite(speakerPin, HIGH);
+    delayMicroseconds(tone);
+    digitalWrite(speakerPin, LOW);
+    delayMicroseconds(tone);
+  }
+}
+
+void playNote(char note, int duration) {
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1136, 1014, 956 };
+
+  // play the tone corresponding to the note name
+  for (int i = 0; i < 8; i++) {
+    if (names[i] == note) {
+      playTone(tones[i], duration);
+    }
+  }
+}
 
 void setup() {
   Serial.begin(115200);
@@ -132,15 +135,8 @@ void setup() {
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  
-  // Initialize time for RTC functions
-  // if (! rtc.initialized()) {
-  //   Serial.println("RTC is NOT running!");
-  //   // following line sets the RTC to the date & time this sketch was compiled
-  //   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // }
-  
-  // initializeFile();
+
+  pinMode(speakerPin, OUTPUT);
 
   // Create the BLE Device
   BLEDevice::init("Ring Light Control"); // Give it a name
@@ -188,11 +184,21 @@ void loop() {
   distance = calculateDistance();
   if (deviceConnected) {
     Serial.println(distance);
-    if(distance <= 5) {
+    if (distance <= 5) {
       pixels.clear();
       pixels.show();
+      for (int i = 0; i < 15; i++) {
+        if (notes[i] == ' ') {
+          delay(beats[i] * tempo); // rest
+        }
+        else {
+          playNote(notes[i], beats[i] * tempo);
+        }
+
+        // pause between notes
+        delay(tempo / 2);
+      }
     }
     pixels.clear();
   }
-
 }
