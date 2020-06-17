@@ -32,9 +32,9 @@ long duration;
 int distance;
 
 // Define pins
-#define READPIN 32
-#define TRIGPIN 4
-#define ECHOPIN 5
+#define READPIN    32
+#define TRIGPIN    4
+#define ECHOPIN    5
 #define LEDPIN     2
 #define SPEAKERPIN 13
 
