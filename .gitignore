@@ -1,3 +1,4 @@
 .vscode/*
 build/*
 USDS_Test/*
+.DS_Store
