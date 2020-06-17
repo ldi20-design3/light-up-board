@@ -187,7 +187,7 @@ void loop() {
   distance = calculateDistance();
   if (deviceConnected) {
     Serial.println(distance);
-    if (distance <= 5) {
+    if (distance <= 2.5) {
       pixels.clear();
       pixels.show();
       for (int i = 0; i < 15; i++) {
