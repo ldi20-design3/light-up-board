@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "warpaltarpers",
+      "name": "Maxwell Walters",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/25324555?v=4",
+      "profile": "http://krishnaoxford.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "light-up-module",
+  "projectOwner": "ldi20-design3",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
