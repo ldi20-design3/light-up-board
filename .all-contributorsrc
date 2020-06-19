@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "sbrand01",
+      "name": "sbrand01",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/66637186?v=4",
+      "profile": "https://github.com/sbrand01",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "light-up-module",
+  "projectOwner": "ldi20-design3",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
